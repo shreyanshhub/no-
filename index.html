@@ -1,167 +1,216 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Do you love me?</title>
-  <style>
-    :root{--bg:#0f1724;--card:#0b1220;--accent:#ff6b81;--muted:#9aa4b2}
-    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
-    body{background:radial-gradient(1200px 800px at 10% 10%, rgba(255,107,129,0.06), transparent), radial-gradient(900px 700px at 90% 90%, rgba(99,102,241,0.04), transparent), var(--bg);color:#e6eef8;display:flex;align-items:center;justify-content:center}
-    .card{width:min(980px,94vw);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));backdrop-filter: blur(6px);border-radius:20px;padding:36px;box-shadow:0 8px 30px rgba(3,7,18,0.6);text-align:center}
-    h1{font-size:clamp(20px,3.5vw,36px);margin:0 0 10px}
-    p.lead{color:var(--muted);margin:0 0 28px;font-size:clamp(14px,2.1vw,18px)}
-    .buttons{position:relative;height:200px;display:flex;align-items:center;justify-content:center}
-    .btn{appearance:none;border:0;padding:14px 22px;border-radius:999px;font-weight:700;cursor:pointer;outline:none;box-shadow:0 6px 18px rgba(2,6,23,0.6);transform-origin:center center;transition:transform 200ms ease, box-shadow 120ms ease}
-    .btn:active{transform:translateY(2px)}
-    .yes{background:linear-gradient(90deg,#ff8aa0,#ff5b8a);color:white;font-size:clamp(14px,2vw,20px)}
-    .no{position:absolute;background:transparent;border:2px solid rgba(255,255,255,0.12);color:#f1f5f9;padding:12px 18px;font-size:clamp(12px,1.8vw,16px)}
-    .hint{margin-top:18px;color:var(--muted);font-size:13px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do You Love Me?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* poem modal */
-    .poem{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;pointer-events:none}
-    .poem .sheet{width:min(680px,96vw);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:20px 22px;box-shadow:0 20px 60px rgba(3,7,18,0.7);text-align:center;pointer-events:auto;opacity:0;transform:translateY(10px) scale(0.98);transition:opacity 260ms ease, transform 260ms cubic-bezier(.2,.9,.2,1)}
-    .poem.show .sheet{opacity:1;transform:translateY(0) scale(1)}
-    .poem h2{margin:0 0 8px;color:#fff}
-    .poem p{margin:0 0 10px;color:var(--muted)}
-    .close{margin-top:12px;background:transparent;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
 
-    /* tiny hearts animation under the heading */
-    .hearts{height:30px;margin-top:8px;display:flex;gap:8px;align-items:center;justify-content:center}
-    .heart{width:10px;height:10px;background:var(--accent);transform:rotate(-45deg);border-radius:2px;position:relative}
-    .heart:before,.heart:after{content:'';position:absolute;width:10px;height:10px;border-radius:50%;background:var(--accent)}
-    .heart:before{top:-6px;left:0}
-    .heart:after{left:6px;top:0}
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
 
-    @media (max-width:520px){.buttons{height:170px}}
-  </style>
+        h1 {
+            color: white;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 3rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .buttons-container {
+            position: relative;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        button {
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        #yesBtn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px 40px;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        #noBtn {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+            padding: 15px 40px;
+            position: absolute;
+        }
+
+        .poem-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .poem-container.show {
+            display: block;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .poem-container h2 {
+            color: #f5576c;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .poem-container p {
+            color: #333;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        .heart {
+            color: #f5576c;
+            font-size: 3rem;
+            margin-top: 20px;
+            animation: heartbeat 1.5s ease infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+        }
+
+        @media (max-width: 600px) {
+            .buttons-container {
+                height: 250px;
+            }
+            
+            button {
+                font-size: 1rem;
+                padding: 12px 30px;
+            }
+
+            .poem-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="card" role="main">
-    <h1>Do you love me?</h1>
-    <div class="hearts" aria-hidden="true">
-      <span class="heart"></span>
-      <span class="heart" style="transform:scale(1.15) rotate(-45deg)"></span>
-      <span class="heart" style="transform:scale(0.9) rotate(-45deg)"></span>
+    <div class="container">
+        <div id="questionSection">
+            <h1>Do you love me? </h1>
+            <div class="buttons-container">
+                <button id="yesBtn">Hell Yeah!</button>
+                <button id="noBtn">No way</button>
+            </div>
+        </div>
+
+        <div class="poem-container" id="poemSection">
+            <h2>I knew it! </h2>
+            <p>
+                Glad you didn't click no, but try oncee, it will be fun<br>
+                just like you are shine of my sun<br>
+                crazy that i crave for you<br>
+                bruumm bruumm bruuuummmmmmm <3<br>
+                <br>
+                heheee<br>
+                ly too <3.
+            </p>
+            <div class="heart"></div>
+        </div>
     </div>
-    <p class="lead">Pick one:</p>
 
-    <div class="buttons" id="playground">
-      <button id="yesBtn" class="btn yes">Hell yeah!</button>
-      <button id="noBtn" class="btn no">No</button>
-    </div>
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const questionSection = document.getElementById('questionSection');
+        const poemSection = document.getElementById('poemSection');
+        const buttonsContainer = document.querySelector('.buttons-container');
 
-    <p class="hint">(If you click <strong>No</strong> the buttons will play a little game. Try it!)</p>
-  </div>
+        let fontSize = 1.2;
+        let padding = 15;
 
-  <div class="poem" id="poem" aria-hidden="true">
-    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="poemTitle">
-      <h2 id="poemTitle">A tiny poem for you 💌</h2>
-      <p>In little laughs and whispered dreams,</p>
-      <p>in morning coffee and midnight schemes,</p>
-      <p>my world found its sweetest view —</p>
-      <p>all of it because of you.</p>
-      <button class="close" id="closePoem">Close</button>
-    </div>
-  </div>
+        yesBtn.addEventListener('click', () => {
+            questionSection.style.display = 'none';
+            poemSection.classList.add('show');
+        });
 
-  <script>
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const playground = document.getElementById('playground');
-    const poemWrap = document.getElementById('poem');
-    const closePoem = document.getElementById('closePoem');
+        noBtn.addEventListener('mouseover', () => {
+            moveButton();
+        });
 
-    // start no button somewhere near the right so it's fun on load
-    function placeNoInitial(){
-      const rect = playground.getBoundingClientRect();
-      const x = rect.width*0.65;
-      const y = rect.height*0.35;
-      noBtn.style.left = x + 'px';
-      noBtn.style.top = y + 'px';
-    }
-    placeNoInitial();
+        noBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            increaseYesButton();
+            moveButton();
+        });
 
-    // keep track of scale for yes button
-    let yesScale = 1;
+        function increaseYesButton() {
+            fontSize += 0.2;
+            padding += 3;
+            yesBtn.style.fontSize = fontSize + 'rem';
+            yesBtn.style.padding = padding + 'px ' + (padding * 2.5) + 'px';
+        }
 
-    function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
+        function moveButton() {
+            const container = buttonsContainer.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            const maxX = container.width - btnRect.width - 40;
+            const maxY = container.height - btnRect.height - 40;
+            
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
 
-    function moveNoRandom(){
-      const parentRect = playground.getBoundingClientRect();
-      const b = noBtn.getBoundingClientRect();
-      const btnW = b.width; const btnH = b.height;
-      // compute allowed area inside playground
-      const maxLeft = parentRect.width - btnW - 8;
-      const maxTop = parentRect.height - btnH - 8;
-      // random but biased away from current position to feel playful
-      let left = Math.random() * maxLeft;
-      let top = Math.random() * maxTop;
-      // set
-      noBtn.style.left = left + 'px';
-      noBtn.style.top = top + 'px';
-      // small pop animation
-      noBtn.animate([{transform:'translateY(0) scale(1)'},{transform:'translateY(-6px) scale(1.06)'},{transform:'translateY(0) scale(1)'}],{duration:320,easing:'cubic-bezier(.2,.8,.2,1)'});
-    }
-
-    // handle clicks
-    noBtn.addEventListener('click', (e)=>{
-      // increase yes size
-      yesScale += 0.12;
-      yesScale = clamp(yesScale, 1, 4); // don't blow up the page
-      yesBtn.style.transform = `scale(${yesScale})`;
-      // move no randomly
-      moveNoRandom();
-    });
-
-    // also make the No button dodge when hovered (extra fun on desktop)
-    noBtn.addEventListener('mouseenter', (e)=>{
-      // small chance to move on hover
-      if(Math.random() < 0.65) moveNoRandom();
-    });
-
-    // mobile: make it respond to touchstart as well
-    noBtn.addEventListener('touchstart', (e)=>{
-      e.preventDefault();
-      yesScale += 0.12;
-      yesScale = clamp(yesScale,1,4);
-      yesBtn.style.transform = `scale(${yesScale})`;
-      moveNoRandom();
-    },{passive:false});
-
-    // yes button click -> show poem
-    yesBtn.addEventListener('click', ()=>{
-      poemWrap.classList.add('show');
-      poemWrap.setAttribute('aria-hidden','false');
-    });
-
-    closePoem.addEventListener('click', ()=>{
-      poemWrap.classList.remove('show');
-      poemWrap.setAttribute('aria-hidden','true');
-    });
-
-    // keep no button inside if the window resizes
-    window.addEventListener('resize', ()=>{
-      const parentRect = playground.getBoundingClientRect();
-      const b = noBtn.getBoundingClientRect();
-      const left = parseFloat(noBtn.style.left || 0);
-      const top = parseFloat(noBtn.style.top || 0);
-      const maxLeft = Math.max(8, parentRect.width - b.width - 8);
-      const maxTop = Math.max(8, parentRect.height - b.height - 8);
-      noBtn.style.left = clamp(left,8,maxLeft) + 'px';
-      noBtn.style.top = clamp(top,8,maxTop) + 'px';
-    });
-
-    // make playground relative so absolute works
-    playground.style.position = 'relative';
-    // ensure initial style for no
-    noBtn.style.position = 'absolute';
-    noBtn.style.left = 'calc(60%)';
-    noBtn.style.top = '30px';
-
-    // tiny accessibility: allow keyboard
-    noBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') noBtn.click(); });
-    yesBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') yesBtn.click(); });
-  </script>
+        // Initialize button position
+        moveButton();
+    </script>
 </body>
 </html>
